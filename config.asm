@@ -140,7 +140,7 @@ __C128_C64_MODE             = 0     ; Registri e codici extra del C128 (1: da in
 __C128_DCR                  = 0     ; Registro extra del C128DCR (1: da includere)
 __DISABLE_KERNAL            = 0     ; Kernal disabilitato (1: tutta RAM; 0: Kernal attivo)
 __PRESERVE_ARG              = 1     ; Macro di fp che alterano ARG (1: lo preservano; 0: no)
-;
+
 __BGCOL                     = $03   ; Cella in ZP: selettore del colore di sfondo ECM (0-3)
 __VIC_MODEL                 = $04   ; Cella in ZP: modello di VIC-II rilevato
 __KBD_HISTORY               = $05   ; Cella in ZP: serie storica di KEYSCAN
