@@ -1,6 +1,6 @@
 ; ==============================================================================
 ; FILE:           config.asm
-; PROGETTO:       Configurazione (config.c64)
+; PROGETTO:       Template di Configurazione del Progetto (config.asm)
 ; TARGET:         ACME Assembler / MOS 6510 (Commodore 64)
 ; DESCRIZIONE:    Template di configurazione: parametri di configurazione e punti
 ;                 di personalizzazione delle librerie c64, chip, fp, io, math e system.
