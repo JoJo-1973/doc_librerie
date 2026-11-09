@@ -141,9 +141,9 @@ __C128_DCR                  = 0     ; Registro extra del C128DCR (1: da includer
 __DISABLE_KERNAL            = 0     ; Kernal disabilitato (1: tutta RAM; 0: Kernal attivo)
 __PRESERVE_ARG              = 1     ; Macro di fp che alterano ARG (1: lo preservano; 0: no)
 
-__BGCOL                     = $03   ; Cella in ZP: selettore del colore di sfondo ECM (0-3)
+__BG_COL                    = $03   ; Cella in ZP: selettore del colore di sfondo ECM (0-3)
 __VIC_MODEL                 = $04   ; Cella in ZP: modello di VIC-II rilevato
 __KBD_HISTORY               = $05   ; Cella in ZP: serie storica di KEYSCAN
 __FP_SAVED_SP               = $06   ; Cella in ZP: .S salvato prima delle chiamate alla ROM (fp)
-__PUTSTRING                 = $AB1E ; Subroutine di stampa di una stringa terminata da zero (STROUT)
-__PUTCHAR                   = $FFD2 ; Subroutine di stampa di un carattere (CHROUT)
+__PUT_STRING                = $AB1E ; Subroutine di stampa di una stringa terminata da zero (STROUT)
+__PUT_CHAR                  = $FFD2 ; Subroutine di stampa di un carattere (CHROUT)
