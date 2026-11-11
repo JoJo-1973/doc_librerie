@@ -21,6 +21,28 @@ __USE_FP_ERROR_HANDLER      = 0     ; Subroutine FP_ERROR_HANDLER (1: da assembl
 ; ------------------------------------------------------------------------------
 
 ; ----------------------------------------
+; chars_pet.asm
+; ----------------------------------------
+
+__USE_PET_SCR               = 0     ; Subroutine PET_SCR (1: da assemblare)
+__USE_PET_SCR_C             = 0     ; Subroutine PET_SCR_C (1: da assemblare)
+__USE_PET_ASC               = 0     ; Subroutine PET_ASC (1: da assemblare)
+__USE_PET_ASC_C             = 0     ; Subroutine PET_ASC_C (1: da assemblare)
+__USE_PET_ECM               = 0     ; Subroutine PET_ECM (1: da assemblare)
+__USE_PET_ECM_C             = 0     ; Subroutine PET_ECM_C (1: da assemblare)
+
+; ----------------------------------------
+; chars_scr.asm
+; ----------------------------------------
+
+__USE_SCR_PET               = 0     ; Subroutine SCR_PET (1: da assemblare)
+__USE_SCR_PET_C             = 0     ; Subroutine SCR_PET_C (1: da assemblare)
+__USE_SCR_ASC               = 0     ; Subroutine SCR_ASC (1: da assemblare)
+__USE_SCR_ASC_C             = 0     ; Subroutine SCR_ASC_C (1: da assemblare)
+__USE_SCR_ECM               = 0     ; Subroutine SCR_ECM (1: da assemblare)
+__USE_SCR_ECM_C             = 0     ; Subroutine SCR_ECM_C (1: da assemblare)
+
+; ----------------------------------------
 ; disk_tools.asm
 ; ----------------------------------------
 
