@@ -114,8 +114,21 @@ for lib in sorted(d for d in os.listdir(LIBS) if os.path.isdir(os.path.join(LIBS
     for f in mods:
         L = read(os.path.join(LIBS, lib, f))
         info.append(dict(file=f, L=L, contracts=contracts(L), notes=notes(L)))
-    data[lib] = info
-symbol_libs = sorted(l for l, ms in data.items() if not any(m['contracts'] for m in ms))
+    # modulo spezzato (LIB-06, DOC-12): i sotto-moduli sono i file <modulo>_*.asm inclusi dal modulo principale,
+    # nell'ordine delle sue righe !source; non sono moduli del documento
+    byname = {m['file']: m for m in info}
+    subs_all = set()
+    for m in info:
+        stem = m['file'][:-4]
+        m['subs'] = []
+        for l in m['L']:
+            q = re.match(r'^\s*!source\s+"([^"/\\]+\.asm)"', l)
+            if q and q.group(1).startswith(stem + '_') and q.group(1) in byname and q.group(1) != m['file']:
+                m['subs'].append(byname[q.group(1)]); subs_all.add(q.group(1))
+    data[lib] = [m for m in info if m['file'] not in subs_all]
+def all_contracts(m):
+    return m['contracts'] + [c for s in m['subs'] for c in s['contracts']]
+symbol_libs = sorted(l for l, ms in data.items() if not any(all_contracts(m) for m in ms))
 utility_libs = sorted(l for l in data if l not in symbol_libs and l != 'system')
 order = (['system'] if 'system' in data else []) + utility_libs + symbol_libs
 
@@ -182,13 +195,13 @@ def table(kind, head, rows, brk, ctx=''):
         body += f'<tr{" class=pbk" if i == brk else ""}>{cells}</tr>'
     return f'<table class={kind}><colgroup>{cols}</colgroup><thead><tr>{h}</tr></thead><tbody>{body}</tbody></table>'
 
-def contract_pages(lines, key, title):
+def contract_pages(lines, key, title, grp=None):
     pages.append(('ODD', None))
     ch = [lines[k:k + CAP] for k in range(0, len(lines), CAP)]
     for c, t in enumerate(ch):
         hh = title + (' <small>(continua)</small>' if c else '')
         seg = '<p class="segue">segue...</p>' if c < len(ch) - 1 else ''
-        pages.append((key if c == 0 else f'{key}-c{c}', f'<section class="pg"><h3>{hh}</h3><pre>{e(chr(10).join(t))}</pre>{seg}</section>'))
+        pages.append((key if c == 0 else f'{key}-c{c}', f'<section class="pg">' + (f'<p class=gh>{e(grp)}</p>' if grp and c == 0 else '') + f'<h3>{hh}</h3><pre>{e(chr(10).join(t))}</pre>{seg}</section>'))
 
 for li, lib in enumerate(order, 1):
     mods = data[lib]
@@ -212,20 +225,29 @@ for li, lib in enumerate(order, 1):
                 return f'<section class="pg">{x}</section>'
             pages.append((f'M{n}', gen, [[r[0] for r in rs] for t, rs in secs], None))
             continue
-        urows = utility_rows(field(L, 'CONTENUTO'))
-        cs = m['contracts'][:NMAX]
-        if NMAX is None and urows and len(urows) != len(m['contracts']):
-            warnings.append(f'{lib}/{f}: {len(urows)} voci in CONTENUTO, {len(m["contracts"])} contratti')
-        def gen(brks=None, n=n, f=f, desc=desc, urows=urows, nt=m['notes'], lib=lib):
+        members = [m] + m['subs']
+        urows = [r for x in members for r in utility_rows(field(x['L'], 'CONTENUTO'))]
+        allc = [(x['file'] if x is not m else None, c) for x in members for c in x['contracts']]
+        if NMAX is not None: allc = allc[:NMAX]
+        if NMAX is None and urows and len(urows) != len(allc):
+            warnings.append(f'{lib}/{f}: {len(urows)} voci in CONTENUTO, {len(allc)} contratti')
+        ngroups = [(x['file'] if x is not m else None, x['notes']) for x in members if x['notes']]
+        def gen(brks=None, n=n, f=f, desc=desc, urows=urows, ngroups=ngroups, lib=lib):
             x = f'<h2>{n}&ensp;{e(f)}</h2><h3>{n}.1&ensp;Descrizione</h3><p>{e(typo(desc))}</p>'
             if urows: x += table('u', ['Utilit&agrave;', 'Descrizione'], urows, (brks or {}).get(0), f'{lib}/{f}')
-            x += f'<h3 class=nh>{n}.2&ensp;Note d\'uso</h3>' + (noteboxes(nt) if nt else '<p>Nessuna nota in questo modulo.</p>')
+            x += f'<h3 class=nh>{n}.2&ensp;Note d\'uso</h3>'
+            if not ngroups: x += '<p>Nessuna nota in questo modulo.</p>'
+            for gname, nt in ngroups:
+                if gname: x += f'<p class=gh>{e(gname)}</p>'
+                x += noteboxes(nt)
             return f'<section class="pg">{x}</section>'
-        pages.append((f'M{n}', gen, [[r[0] for r in urows]], n if m['notes'] else None))
-        if m['notes']: toc.append((2, f'{n}.2', "Note d'uso", f'N{n}'))
-        for k, (name, b) in enumerate(cs, 3):
+        pages.append((f'M{n}', gen, [[r[0] for r in urows]], n if ngroups else None))
+        if ngroups: toc.append((2, f'{n}.2', "Note d'uso", f'N{n}'))
+        prev = None
+        for k, (gname, (name, b)) in enumerate(allc, 3):
             toc.append((2, f'{n}.{k}', name, f'C{n}.{k}'))
-            contract_pages(b, f'C{n}.{k}', f'{n}.{k}&ensp;{e(name)}')
+            contract_pages(b, f'C{n}.{k}', f'{n}.{k}&ensp;{e(name)}', gname if gname != prev else None)
+            prev = gname
 
 # ---------------------------------------------------------------- CSS
 css = '''
@@ -261,6 +283,7 @@ pre+pre,.segue+pre,table+h3+pre,h3+pre.n{margin-top:11.5pt}
 h3.nh+pre{margin-top:0}
 .segue{text-align:right;font-style:italic;margin:2mm 0 0}
 small{font-weight:normal;font-size:10pt}
+.gh{font-weight:bold;font-size:11pt;margin:5mm 0 2mm;break-after:avoid}h3+.gh{margin-top:0}.pg>.gh:first-child{margin-top:0}
 '''
 head = f'<!doctype html><meta charset=utf-8><style>{css}</style>'
 
