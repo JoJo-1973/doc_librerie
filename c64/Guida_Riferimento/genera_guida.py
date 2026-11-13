@@ -37,7 +37,7 @@ def group(d):
 
 def typo(t):
     t = re.sub(r'(?<![\w$%.#])(\d{5,})(?![\w.])', lambda m: group(m.group(1)), t)
-    t = re.sub(r'(\d) (?=(?:cicli|KB|MHz|kHz|Hz|ms|µs)\b)', '\\1' + NB, t)
+    t = re.sub(r'(\d) (?=(?:cicli|kB|MHz|kHz|Hz|ms|µs)\b)', '\\1' + NB, t)
     t = re.sub(r'(\(-?\d+;) (?=-?\d)', '\\1' + NB, t)
     acc = {'A': 'À', 'E': 'È', 'I': 'Ì', 'O': 'Ò', 'U': 'Ù'}
     t = re.sub(r"(?<![A-Za-zÀ-ÿ'])([AEIOU])'(?=[\s.,;:)]|$)", lambda m: acc[m.group(1)], t)
@@ -336,14 +336,13 @@ with sync_playwright() as p:
     body_pdf = rend(pg, 'body', body)
     assert len(pypdf.PdfReader(body_pdf).pages) == nb_pages, 'impaginazione incoerente'
     rows = ''.join(f'<div class="r l{l}"><span class=t>{n}&ensp;{e(t)}</span><span class=d></span><span class=p>{pgno[k]}</span></div>' for l, n, t, k in toc)
-    idx_pdf = rend(pg, 'idx', f'<section class="idx"><h2>Indice</h2>{rows}</section>')
-    cov_pdf = rend(pg, 'cov', '<section class=cover><h1>Guida di riferimento<br>ai contratti</h1></section><section class=cover style="break-before:page;height:1px"></section>')
+    # copertina (i), pagina bianca (ii) e indice (da iii) in un solo documento: il contatore delle pagine parte dalla copertina (DOC-12, punto 2)
+    pre_pdf = rend(pg, 'pre', '<section class=cover><h1>Guida di riferimento<br>ai contratti</h1></section><section class=cover style="break-before:page;height:1px"></section>' + f'<section class="idx" style="break-before:page"><h2>Indice</h2>{rows}</section>')
     br.close()
 
-n_idx = len(pypdf.PdfReader(idx_pdf).pages)
+n_idx = len(pypdf.PdfReader(pre_pdf).pages) - 2
 w = pypdf.PdfWriter()
-for src in (cov_pdf, idx_pdf):
-    for x in pypdf.PdfReader(src).pages: w.add_page(x)
+for x in pypdf.PdfReader(pre_pdf).pages: w.add_page(x)
 if n_idx % 2: w.add_blank_page(width=595.28, height=841.89)
 for x in pypdf.PdfReader(body_pdf).pages: w.add_page(x)
 w.write(A.out)
