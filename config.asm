@@ -3,18 +3,33 @@
 ; PROGETTO:       Template di Configurazione del Progetto (config.asm)
 ; TARGET:         ACME Assembler / MOS 6510 (Commodore 64)
 ; DESCRIZIONE:    Template di configurazione: parametri di configurazione e punti
-;                 di personalizzazione delle librerie c64, chip, fp, io, math e system.
+;                 di personalizzazione delle librerie c64, chip, io, math e system.
 ; ==============================================================================
 
 ; ------------------------------------------------------------------------------
-; Libreria fp
+; Libreria chip
 ; ------------------------------------------------------------------------------
 
 ; ----------------------------------------
-; fp_error.asm
+; nmi_tools.asm
 ; ----------------------------------------
 
-__USE_FP_ERROR_HANDLER      = 0     ; Subroutine FP_ERROR_HANDLER (1: da assemblare)
+__USE_NMI_HIBASE            = 0     ; Subroutine NMI_HIBASE (1: da assemblare)
+__USE_NMI_RESTORE           = 0     ; Subroutine NMI_RESTORE (1: da assemblare)
+
+; ----------------------------------------
+; vic_ii_tools.asm
+; ----------------------------------------
+
+__USE_VIC_PALETTE           = 0     ; Subroutine VIC_PALETTE (1: da assemblare)
+__USE_VIC_BANK              = 0     ; Subroutine VIC_BANK (1: da assemblare)
+__USE_VIC_SCREEN            = 0     ; Subroutine VIC_SCREEN (1: da assemblare; richiede VIC_BANK)
+__USE_VIC_CHARGEN           = 0     ; Subroutine VIC_CHARGEN (1: da assemblare; richiede VIC_BANK)
+__USE_VIC_BITMAP            = 0     ; Subroutine VIC_BITMAP (1: da assemblare; richiede VIC_BANK)
+__USE_VIC_COPY_CHARGEN      = 0     ; Subroutine VIC_COPY_CHARGEN (1: da assemblare; richiede VIC_CHARGEN)
+__USE_COMPUTE_CELL_ADDRESS  = 0     ; Subroutine COMPUTE_CELL_ADDRESS (1: da assemblare)
+__USE_GET_SCREEN_CELL       = 0     ; Subroutine GET_SCREEN_CELL (1: da assemblare; richiede COMPUTE_CELL_ADDRESS)
+__USE_GET_COLOR_CELL        = 0     ; Subroutine GET_COLOR_CELL (1: da assemblare; richiede COMPUTE_CELL_ADDRESS)
 
 ; ------------------------------------------------------------------------------
 ; Libreria io
@@ -79,9 +94,26 @@ __USE_DISK_COMMAND          = 0     ; Subroutine DISK_COMMAND (1: da assemblare;
 
 __USE_KEYSCAN               = 0     ; Subroutine KEYSCAN (1: da assemblare)
 
+; ----------------------------------------
+; print_tools.asm
+; ----------------------------------------
+
+__USE_PRINT_MSG             = 0     ; Subroutine PRINT_MSG (1: da assemblare)
+__USE_PRINT_NTH             = 0     ; Subroutine PRINT_NTH (1: da assemblare; richiede PRINT_MSG)
+__USE_PRINT_RAW             = 0     ; Subroutine PRINT_RAW (1: da assemblare)
+__USE_PRINT_IMM             = 0     ; Subroutine PRINT_IMM (1: da assemblare)
+__USE_PLOT_CHAR             = 0     ; Subroutine PLOT_CHAR (1: da assemblare; richiede COMPUTE_CELL_ADDRESS)
+__USE_COLOR_CHAR            = 0     ; Subroutine COLOR_CHAR (1: da assemblare; richiede COMPUTE_CELL_ADDRESS)
+
 ; ------------------------------------------------------------------------------
 ; Libreria math
 ; ------------------------------------------------------------------------------
+
+; ----------------------------------------
+; fp_error.asm
+; ----------------------------------------
+
+__USE_FP_ERROR_HANDLER      = 0     ; Subroutine FP_ERROR_HANDLER (1: da assemblare)
 
 ; ----------------------------------------
 ; math_div.asm
@@ -143,38 +175,6 @@ __USE_SMUL_32X32            = 0     ; Subroutine SMUL_32X32 (1: da assemblare)
 
 __USE_LOMEM                 = 0     ; Subroutine LOMEM (1: da assemblare)
 __USE_HIMEM                 = 0     ; Subroutine HIMEM (1: da assemblare)
-
-; ----------------------------------------
-; nmi_tools.asm
-; ----------------------------------------
-
-__USE_NMI_HIBASE            = 0     ; Subroutine NMI_HIBASE (1: da assemblare)
-__USE_NMI_RESTORE           = 0     ; Subroutine NMI_RESTORE (1: da assemblare)
-
-; ----------------------------------------
-; print_tools.asm
-; ----------------------------------------
-
-__USE_PRINT_MSG             = 0     ; Subroutine PRINT_MSG (1: da assemblare)
-__USE_PRINT_NTH             = 0     ; Subroutine PRINT_NTH (1: da assemblare; richiede PRINT_MSG)
-__USE_PRINT_RAW             = 0     ; Subroutine PRINT_RAW (1: da assemblare)
-__USE_PRINT_IMM             = 0     ; Subroutine PRINT_IMM (1: da assemblare)
-__USE_PLOT_CHAR             = 0     ; Subroutine PLOT_CHAR (1: da assemblare; richiede COMPUTE_CELL_ADDRESS)
-__USE_COLOR_CHAR            = 0     ; Subroutine COLOR_CHAR (1: da assemblare; richiede COMPUTE_CELL_ADDRESS)
-
-; ----------------------------------------
-; vic_ii_tools.asm
-; ----------------------------------------
-
-__USE_VIC_PALETTE           = 0     ; Subroutine VIC_PALETTE (1: da assemblare)
-__USE_VIC_BANK              = 0     ; Subroutine VIC_BANK (1: da assemblare)
-__USE_VIC_SCREEN            = 0     ; Subroutine VIC_SCREEN (1: da assemblare; richiede VIC_BANK)
-__USE_VIC_CHARGEN           = 0     ; Subroutine VIC_CHARGEN (1: da assemblare; richiede VIC_BANK)
-__USE_VIC_BITMAP            = 0     ; Subroutine VIC_BITMAP (1: da assemblare; richiede VIC_BANK)
-__USE_VIC_COPY_CHARGEN      = 0     ; Subroutine VIC_COPY_CHARGEN (1: da assemblare; richiede VIC_CHARGEN)
-__USE_COMPUTE_CELL_ADDRESS  = 0     ; Subroutine COMPUTE_CELL_ADDRESS (1: da assemblare)
-__USE_GET_SCREEN_CELL       = 0     ; Subroutine GET_SCREEN_CELL (1: da assemblare; richiede COMPUTE_CELL_ADDRESS)
-__USE_GET_COLOR_CELL        = 0     ; Subroutine GET_COLOR_CELL (1: da assemblare; richiede COMPUTE_CELL_ADDRESS)
 
 ; ------------------------------------------------------------------------------
 ; Punti di personalizzazione
