@@ -89,6 +89,12 @@ __USE_DISK_DIRECTORY        = 0     ; Subroutine DISK_DIRECTORY (1: da assemblar
 __USE_DISK_COMMAND          = 0     ; Subroutine DISK_COMMAND (1: da assemblare; richiede DISK_STATUS)
 
 ; ----------------------------------------
+; input_tools.asm
+; ----------------------------------------
+
+__USE_PADDLE_READ           = 0     ; Subroutine PADDLE_READ (1: da assemblare)
+
+; ----------------------------------------
 ; keyboard_tools.asm
 ; ----------------------------------------
 
@@ -164,6 +170,13 @@ __USE_MUL_32X24             = 0     ; Subroutine MUL_32X24 (1: da assemblare)
 __USE_SMUL_32X24            = 0     ; Subroutine SMUL_32X24 (1: da assemblare)
 __USE_MUL_32X32             = 0     ; Subroutine MUL_32X32 (1: da assemblare)
 __USE_SMUL_32X32            = 0     ; Subroutine SMUL_32X32 (1: da assemblare)
+
+; ----------------------------------------
+; rng.asm
+; ----------------------------------------
+
+__USE_RANDOMIZE_XORSHIFT_16 = 0     ; Subroutine RANDOMIZE_XORSHIFT_16 (1: da assemblare)
+__USE_RND_XORSHIFT_16       = 0     ; Subroutine RND_XORSHIFT_16 (1: da assemblare)
 
 ; ------------------------------------------------------------------------------
 ; Libreria system
